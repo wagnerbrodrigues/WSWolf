@@ -1,0 +1,17 @@
+# Ignorar arquivos temporários
+*.tmp
+*.log
+*.json
+teste.py
+
+# Ignorar diretórios de dependências e bibliotecas
+/mysql/dbdata/
+/__pycache__/
+
+# Ignorar arquivos gerados durante a compilação
+/build/
+/dist/
+
+# Ignorar arquivos de configuração específicos para cada desenvolvedor
+.env
+.env.local
