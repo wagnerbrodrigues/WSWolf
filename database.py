@@ -67,16 +67,24 @@ class database:
             print(f"load_table_to_dataframe: {e}, erro ao carregar a tabela {table}")
 
     
-    def truncate_tables(self):
+    # def truncate_tables(self):
+    #     cursor = self.con.cursor()
+    #     cursor.execute("SHOW TABLES")
+    #     tables = cursor.fetchall()
+
+    #     try:
+    #         for table in tables:
+    #             table_name = table[0]
+    #             cursor.execute(f"TRUNCATE TABLE {table_name}")
+
+    #         self.con.commit()
+    #     except Exception as e:
+    #         print(f"truncate_tables {e}")  
+
+    def truncate_table(self, table_name):
         cursor = self.con.cursor()
-        cursor.execute("SHOW TABLES")
-        tables = cursor.fetchall()
-
         try:
-            for table in tables:
-                table_name = table[0]
-                cursor.execute(f"TRUNCATE TABLE {table_name}")
-
+            cursor.execute(f"TRUNCATE TABLE {table_name}")
             self.con.commit()
         except Exception as e:
             print(f"truncate_tables {e}")    
@@ -86,7 +94,7 @@ class database:
             host="localhost",
             user="user",
             password="pass",
-            database="scrapper"
+            database="wswolf"
         )
 
         return con

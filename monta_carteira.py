@@ -8,7 +8,7 @@ def monta_carteira():
 def obtem_ativos():
     db = database()
 
-    dfacao = db.load_table_to_dataframe('info_acoes')
+    dfacao = db.load_table_to_dataframe('coleta_acao')
     # Ordenar o DataFrame pelos campos 'score' e 'volume'
     data_sorted = dfacao.sort_values(by=['score', 'volume_diario'], ascending=False)
 

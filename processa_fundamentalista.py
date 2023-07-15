@@ -5,23 +5,25 @@ import pandas as pd
 from applogger import AppLogger
 from decimal import Decimal, getcontext
 
+from config import * 
+
 logger = AppLogger('fundamentalista.log')
 
 def indicadores_fundamentalistas(row):
     score = 0
     PL = row['pl']
-    volume_diario = row['volume_diario']
+    volume_diario = row['vlm_diario']
     DY = row['dy']
-    valor_intrinseco = row['valor_intrinseco']
-    valor_atual = row['valor_atual']
+    valor_intrinseco = row['vlr_intrinseco']
+    valor_atual = row['vlr_acao']
     ROE = row['roe']
     PVP = row['pvp']
     bazin12 = row['bazin12']
     bazin36 = row['bazin36']
     bazin60 = row['bazin60']
     pebit = row['pebit']
-    valor_teto_margem = row['valor_teto_margem']
-    valor_gordon = row['valor_gordon']
+    valor_teto_margem = row['vlr_teto_margem']
+    valor_gordon = row['vlr_gordon']
 
     #empresa inoperavel 
     if volume_diario < 3000000.00: return 0
@@ -41,7 +43,7 @@ def indicadores_fundamentalistas(row):
     if bazin36 > valor_atual: score +=1
     if bazin60 > valor_atual: score +=1
     if valor_atual < valor_teto_margem : score +=1
-    if valor_gordon > valor_atual : score +=1
+  #  if valor_gordon > valor_atual : score +=1
 
     return score
 
@@ -56,11 +58,11 @@ def calcular_valor_intrinseco(vpa, lpa):
 
 def media_por_periodo(df, num_periodos):
     # # Converter a coluna de data para o tipo datetime, se necessário
-    if not pd.api.types.is_datetime64_any_dtype(df['data_comunicado']):
-         df['data_comunicado'] = pd.to_datetime(df['data_comunicado'])
+    if not pd.api.types.is_datetime64_any_dtype(df['dt_comunicado']):
+         df['dt_comunicado'] = pd.to_datetime(df['dt_comunicado'])
 
     # Ordenar o DataFrame por data em ordem decrescente
-    df = df.sort_values('data_comunicado', ascending=False)
+    df = df.sort_values('dt_comunicado', ascending=False)
 
     # Obter a data atual
     data_atual = datetime.now().date()
@@ -69,10 +71,10 @@ def media_por_periodo(df, num_periodos):
     data_inicial = data_atual - pd.DateOffset(months=12 * num_periodos)
 
     # Filtrar o DataFrame para manter apenas as linhas dentro do período de filtragem
-    df_filtrado = df[df['data_comunicado'] >= data_inicial]
+    df_filtrado = df[df['dt_comunicado'] >= data_inicial]
 
     # Calcular a soma dos valores
-    soma_valores = df_filtrado['valor'].sum()
+    soma_valores = df_filtrado['vlr'].sum()
 
     # Calcular a média dos valores por ano
     media_valores = soma_valores / num_periodos
@@ -95,11 +97,11 @@ def calcular_gordon(df, taxa_retorno):
     # Calcular o valor presente dos dividendos
     valor_presente = Decimal(0)
     for index, row in df.iterrows():
-        valor_presente += Decimal(row['valor']) / ((Decimal(1) + Decimal(taxa_retorno)) ** (index + 1))
+        valor_presente += Decimal(row['vlr']) / ((Decimal(1) + Decimal(taxa_retorno)) ** (index + 1))
 
     # Calcular a taxa de crescimento dos dividendos
-    if df['valor'].iloc[0] != 0:
-        taxa_crescimento = (Decimal(df['valor'].iloc[-1]) / Decimal(df['valor'].iloc[0])) - Decimal(1)
+    if df['vlr'].iloc[0] != 0:
+        taxa_crescimento = (Decimal(df['vlr'].iloc[-1]) / Decimal(df['vlr'].iloc[0])) - Decimal(1)
     else:
         taxa_crescimento = Decimal(0)  # ou qualquer outro valor adequado
 
@@ -110,11 +112,11 @@ def calcular_gordon(df, taxa_retorno):
 
 
 def valor_teto_margem(row):
-    valor_intrinseco = row['valor_intrinseco']
+    valor_intrinseco = row['vlr_intrinseco']
     bazin12 = row['bazin12']
     bazin36 = row['bazin36']
     bazin60 = row['bazin60']
-    valor_gordon = row['valor_gordon']
+    valor_gordon = row['vlr_gordon']
     #determina o menor valor encontrado para a acao
     menor_valor = min(valor_intrinseco, bazin12, bazin36, bazin60)
     #margem de 10% para a compra, em cima do menor valor
@@ -123,26 +125,23 @@ def valor_teto_margem(row):
 def main():
     db = database()
 
-    dfacoes = db.load_table_to_dataframe('info_acoes')
-    dfacoes['valor_intrinseco'] = dfacoes.apply(lambda row: calcular_valor_intrinseco(row['vpa'] , row['lpa']), axis=1)
+    dfinfo_acoes = db.load_table_to_dataframe(tabela_coleta_acao)
+    dfinfo_acoes['vlr_intrinseco'] = dfinfo_acoes.apply(lambda row: calcular_valor_intrinseco(row['vpa'] , row['lpa']), axis=1)
 
-    dfdividendos = db.load_table_to_dataframe('dividendos')
+    dfdividendo = db.load_table_to_dataframe(tabela_dividendo)
 
-    for index, row in dfacoes.iterrows():
-        dftemp = dfdividendos.loc[dfdividendos['acao'] == row['acao']]
-        dfacoes.at[index, 'bazin12'] = calculo_Bazin(dftemp, 1)
-        dfacoes.at[index, 'bazin36'] = calculo_Bazin(dftemp, 3)
-        dfacoes.at[index, 'bazin60'] = calculo_Bazin(dftemp, 5)
+    for index, row in dfinfo_acoes.iterrows():
+        dftemp = dfdividendo.loc[dfdividendo['cod_acao'] == row['cod_acao']]
+        dfinfo_acoes.at[index, 'bazin12'] = calculo_Bazin(dftemp, 1)
+        dfinfo_acoes.at[index, 'bazin36'] = calculo_Bazin(dftemp, 3)
+        dfinfo_acoes.at[index, 'bazin60'] = calculo_Bazin(dftemp, 5)
         taxa_retorno = 0.06
-        dfacoes.at[index, 'valor_gordon'] = calcular_gordon(dftemp, taxa_retorno)
+        dfinfo_acoes.at[index, 'vlr_gordon'] = calcular_gordon(dftemp, taxa_retorno)
 
     
-    dfacoes['valor_teto_margem'] = dfacoes.apply(lambda row: valor_teto_margem(row), axis=1)
-    dfacoes['score'] = dfacoes.apply(lambda row: indicadores_fundamentalistas(row), axis=1)
+    dfinfo_acoes['vlr_teto_margem'] = dfinfo_acoes.apply(lambda row: valor_teto_margem(row), axis=1)
+    dfinfo_acoes['score'] = dfinfo_acoes.apply(lambda row: indicadores_fundamentalistas(row), axis=1)
 
-
-    print(dfacoes)
-
-    db.updateDB('info_acoes', dfacoes, 'acao')
+    db.updateDB(tabela_coleta_acao, dfinfo_acoes, 'cod_acao')
 
 main()
