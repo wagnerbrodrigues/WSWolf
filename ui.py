@@ -1,5 +1,17 @@
 from rich.console import Console
-import scraper_to_database
+
+from scrapper_opcoes import scrapper_opcoes
+from processa_fundamentalista import fundamentalista
+from scrapper_acoes import scrapper_acoes
+from scrapper_opcoes import scrapper_opcoes
+#from monta_carteira  import monta_carteira
+from compara_carteira import compara_carteira
+
+scpp = scrapper_opcoes()
+scpa = scrapper_acoes()
+fund = fundamentalista()
+#mont = monta_carteira()
+comp = compara_carteira()
 
 # Função para exibir o menu
 def exibir_menu():
@@ -7,17 +19,22 @@ def exibir_menu():
 
     while True:
         console.print("\n[bold green]Menu Principal[/bold green]\n")
-        console.print("1. Função 1")
-        console.print("2. Função 2")
-        console.print("3. Sair\n")
+        console.print("1. Scrapper Ações")
+        console.print("2. Scrapper Opções")
+        console.print("3. Processa Fundamentalista")
+        console.print("4. Monta Carteira")
+        console.print("5. Compara Carteira")
+        console.print("0. Sair\n")
 
         opcao = input("Escolha uma opção: ")
 
         if opcao == "1":
-            funcao1()
+            scpp.main()
         elif opcao == "2":
-            funcao2()
-        elif opcao == "3":
+            scpp.main()
+        elif opcao == "5":
+            comp.main()
+        elif opcao == "0":
             break
         else:
             console.print("[bold red]Opção inválida. Por favor, tente novamente.[/bold red]")
