@@ -6,7 +6,7 @@ services:
     container_name: mysql_scrapper
     environment:
       MYSQL_ROOT_PASSWORD: my_secret_password
-      MYSQL_DATABASE: scrapper
+      MYSQL_DATABASE: wswolf
       MYSQL_USER: user
       MYSQL_PASSWORD: pass
     ports:

@@ -2,6 +2,8 @@
 *.tmp
 *.log
 *.json
+*.csv
+*.txt
 teste.py
 
 # Ignorar diretórios de dependências e bibliotecas
