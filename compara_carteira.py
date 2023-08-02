@@ -19,8 +19,8 @@ class compara_carteira:
         dfCarteiraComprada = self.db.load_table_to_dataframe(view_carteira_sistema)
         return dfCarteiraComprada
 
-    def carteira_pessoal(self):
-        dfCarteiraComprada = self.db.load_table_to_dataframe(view_carteira_pessoal)
+    def carteira_aleatoria(self):
+        dfCarteiraComprada = self.db.load_table_to_dataframe(view_carteira_aleatoria)
         return dfCarteiraComprada
 
     def comparar_carteira(self, row, dfUltimaPosicao):
@@ -45,27 +45,38 @@ class compara_carteira:
 
         return result
     
+    def resultado_dividendo(self, dfCarteira, qtdCarteira):
+        dfDividendo = self.db.load_table_to_dataframe_where(tabela_dividendo)
+        #dfDividendo = dfDividendo[dfDividendo['cod_acao'].isin(dfCarteira['cod_acao'])]
+
+        for index, row in dfCarteira.iterrows():
+            dfTemp = dfDividendo[dfDividendo['cod_acao'].isin(row['cod_acao'])]
+            dfTemp = dfTemp[dfTemp['dt_comunicado'] >=  row['dt_coleta']]
+            dfCarteira.at[index, 'vlr_dividendo'] = dfTemp['vlr_acao'].sum() * qtdCarteira
+
+        return dfCarteira
+
     def compara_percentual(self, dfUltimaPosicao, dfCarteira):
         dftemp = dfUltimaPosicao[dfUltimaPosicao['cod_acao'].isin(dfCarteira['cod_acao'])]
         valorAtual = dftemp['vlr_acao'].sum()
         valorCompra = dfCarteira['vlr_acao'].sum()
         diferenca_porcentagem = ((valorAtual / valorCompra) - 1) * 100
         # Calcular o lucro com base na variação percentual e aplicação de R$ 10.000,00
-        lucro_pessoal = 10000 * (1 + diferenca_porcentagem / 100)
+        lucro_aleatoria = 10000 * (1 + diferenca_porcentagem / 100)
 
-        return diferenca_porcentagem, lucro_pessoal
+        return diferenca_porcentagem, lucro_aleatoria
     
     def Compara(self):
         dfUltimaPosicao = self.posicao_recente()
         dfCarteiraWSWolf = self.carteira_wswolf()
-        dfCarteiraPessoal = self.carteira_pessoal()
+        dfCarteiraAleatoria = self.carteira_aleatoria()
 
         dfCompare = dfCarteiraWSWolf.apply(self.comparar_carteira, axis=1, dfUltimaPosicao=dfUltimaPosicao)
         print("*** CARTEIRA WSWOLF ***")
         print(dfCompare)
         print("***********************")
-        dfCompare = dfCarteiraPessoal.apply(self.comparar_carteira, axis=1, dfUltimaPosicao=dfUltimaPosicao)
-        print("*** CARTEIRA PESSOAL ***")
+        dfCompare = dfCarteiraAleatoria.apply(self.comparar_carteira, axis=1, dfUltimaPosicao=dfUltimaPosicao)
+        print("*** CARTEIRA ALEATORIA ***")
         print(dfCompare)
         print("************************")
 
@@ -73,16 +84,32 @@ class compara_carteira:
         self.Compara()
         dfUltimaPosicao = self.posicao_recente()
         dfCarteiraWSWolf = self.carteira_wswolf()
-        dfCarteiraPessoal = self.carteira_pessoal()
+        dfCarteiraAleatoria = self.carteira_aleatoria()
 
 
         diferenca_porcentagem, lucro = self.compara_percentual(dfUltimaPosicao,dfCarteiraWSWolf)
         print(f"A carteira de WsWolf teve uma lucro de {round(diferenca_porcentagem, 2)}%")
         print(f"Se você investisse R$ 10.000,00 na carteira WsWolf, hoje você teria R$ {lucro:.2f}")
 
-        diferenca_porcentagem, lucro = self.compara_percentual(dfUltimaPosicao,dfCarteiraPessoal)
-        print(f"A carteira de Pessoal teve uma lucro de {round(diferenca_porcentagem, 2)}%")
-        print(f"Se você investisse R$ 10.000,00 na carteira pessoal, hoje você teria R$ {lucro:.2f}")
+        diferenca_porcentagem, lucro = self.compara_percentual(dfUltimaPosicao,dfCarteiraAleatoria)
+        print(f"A carteira de Aleatoria teve uma lucro de {round(diferenca_porcentagem, 2)}%")
+        print(f"Se você investisse R$ 10.000,00 na carteira aleatoria, hoje você teria R$ {lucro:.2f}")
+
+        diferenca_porcentagem, lucro = self.compara_percentual(dfUltimaPosicao,dfCarteiraAleatoria)
+        print(f"WSWolf com um lote de 100 por ação {lucro:.2f}")
+
+        diferenca_porcentagem, lucro = self.compara_percentual(dfUltimaPosicao,dfCarteiraAleatoria)
+        print(f"Aleatoria com um lote de 100 por ação {lucro:.2f}")
+
+        diferenca_porcentagem, lucro = self.compara_percentual(dfUltimaPosicao,dfCarteiraAleatoria)
+        print(f"WSWolf com um lote de 100 e dividendos {lucro:.2f}")
+
+        diferenca_porcentagem, lucro = self.compara_percentual(dfUltimaPosicao,dfCarteiraAleatoria)
+        print(f"Aleatoria com um lote de 100 e dividendos {lucro:.2f}")
+
+        diferenca_porcentagem, lucro = self.compara_percentual(dfUltimaPosicao,dfCarteiraAleatoria)
+        print(f"A carteira de Aleatoria teve uma lucro de {round(diferenca_porcentagem, 2)}%")
+        print(f"Se você investisse R$ 10.000,00 na carteira aleatoria, hoje você teria R$ {lucro:.2f}")
 
         
 if __name__ == "__main__":

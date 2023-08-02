@@ -33,13 +33,13 @@ def get_navegator():
         #  dfPagina = pd.DataFrame({
         #         'dt_coleta': self.dt_coleta,
         #         'cod_acao' : acao,
-        #         'vlr_acao' : [self.tryCast(self.nv.pegar_elemento_por_xpath('//*[@id="main-2"]/div[2]/div/div[1]/div/div[1]/div/div[1]/strong'))],
-        #         'vlm_diario' : [self.tryCast(self.nv.pegar_elemento_por_xpath('/html/body/main/div[2]/div/div[5]/div/div/div[3]/div/div/div/strong'))],
-        #         'dy' : [self.tryCast(self.nv.pegar_elemento_por_xpath( '/html/body/main/div[2]/div/div[1]/div/div[4]/div/div[1]/strong'))],
-        #         'pl' : [self.tryCast(self.nv.pegar_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[2]/div/div/strong'))],
-        #         'pvp' : [self.tryCast(self.nv.pegar_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[4]/div/div/strong'))],
-        #         'vpa' : [self.tryCast(self.nv.pegar_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[9]/div/div/strong'))],
-        #         'roe' : [self.tryCast(self.nv.pegar_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[4]/div/div[1]/div/div/strong'))],
-        #         'lpa' : [self.tryCast(self.nv.pegar_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[11]/div/div/strong'))],
-        #         'pebit':  [self.tryCast(self.nv.pegar_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[8]/div/div/strong'))]
+        #         'vlr_acao' : [self.tryCast(self.nv.pegar_valor_elemento_por_xpath('//*[@id="main-2"]/div[2]/div/div[1]/div/div[1]/div/div[1]/strong'))],
+        #         'vlm_diario' : [self.tryCast(self.nv.pegar_valor_elemento_por_xpath('/html/body/main/div[2]/div/div[5]/div/div/div[3]/div/div/div/strong'))],
+        #         'dy' : [self.tryCast(self.nv.pegar_valor_elemento_por_xpath( '/html/body/main/div[2]/div/div[1]/div/div[4]/div/div[1]/strong'))],
+        #         'pl' : [self.tryCast(self.nv.pegar_valor_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[2]/div/div/strong'))],
+        #         'pvp' : [self.tryCast(self.nv.pegar_valor_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[4]/div/div/strong'))],
+        #         'vpa' : [self.tryCast(self.nv.pegar_valor_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[9]/div/div/strong'))],
+        #         'roe' : [self.tryCast(self.nv.pegar_valor_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[4]/div/div[1]/div/div/strong'))],
+        #         'lpa' : [self.tryCast(self.nv.pegar_valor_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[11]/div/div/strong'))],
+        #         'pebit':  [self.tryCast(self.nv.pegar_valor_elemento_por_xpath( '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[8]/div/div/strong'))]
         #     })

@@ -1,0 +1,5 @@
+element_radio_call = '/html/body/div[1]/div[1]/div[1]/div[2]/div[1]/div[2]/label[1]'
+element_div_datas = '/html/body/div[1]/div[1]/div[1]/div[2]/div[2]/div[2]'
+element_slidder_mais = '/html/body/div[1]/div[1]/div[1]/div[2]/div[3]/div[2]/div/span[2]'
+element_slidder_menos = '/html/body/div[1]/div[1]/div[1]/div[2]/div[3]/div[2]/div/span[1]'
+element_botao_export = '//button[@class="dt-button buttons-excel buttons-html5"]'

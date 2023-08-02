@@ -4,6 +4,7 @@
 *.json
 *.csv
 teste.py
+*.xlsx
 
 # Ignorar diretórios de dependências e bibliotecas
 /mysql/dbdata/

@@ -100,6 +100,24 @@ class database:
 
         except Exception as e:
             self.logger.exception(f"load_table_to_dataframe: {e}, erro ao carregar a tabela {table}")
+    
+    def delete_from_table_where(self, table, where_column=None, where_value=None):
+        cursor = self.con.cursor()
+        sql = f"DELETE FROM {table}"
+
+        if where_column and where_value:
+            sql += f" WHERE {where_column} = %s"
+            params = (where_value,)
+        else:
+            params = None
+
+        try:
+            cursor.execute(sql, params)
+            self.con.commit()
+            self.logger.info(f"Registros deletados da tabela {table}")
+        except Exception as e:
+            self.con.rollback()  # Desfaz alterações em caso de erro
+            self.logger.exception(f"delete_from_table_where: {e}, erro ao deletar da tabela {table}")
 
     
     def get_latest_date(self):

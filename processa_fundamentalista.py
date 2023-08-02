@@ -35,9 +35,10 @@ class fundamentalista:
         if volume_diario < 3000000.00: return 0
 
         #score indicadores
+        if PL < 10 and PL > 0 : score += 1
         if PL < 0: score -= 1
-        if PL < 10 : score += 1
-        if pebit < 10 and pebit > 0: score += 1
+        if pebit < 10 and pebit > 0 : score += 1
+        if pebit < 0: score -= 1
         if ROE > 0 : score += 1
         if DY > 6: score += 1
         if PVP > 2: score -= 1
@@ -48,7 +49,8 @@ class fundamentalista:
         if bazin12 > valor_atual: score +=1
         if bazin36 > valor_atual: score +=1
         if bazin60 > valor_atual: score +=1
-        if valor_atual < valor_teto_margem : score +=1
+        if valor_teto_margem > valor_atual : score += 1
+        if valor_teto_margem == 0 : score -= 1
     #  if valor_gordon > valor_atual : score +=1
 
         return score
