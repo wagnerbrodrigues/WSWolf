@@ -5,6 +5,7 @@
 *.csv
 teste.py
 *.xlsx
+*.sql
 
 # Ignorar diretórios de dependências e bibliotecas
 /mysql/dbdata/

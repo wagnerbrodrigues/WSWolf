@@ -16,7 +16,7 @@ class Navegador:
         self.logger = logger
 
         options = webdriver.ChromeOptions()
-       # options.add_argument("--headless=new")
+        options.add_argument("--headless=new")
         #options.add_experimental_option(f"download.default_directory={diretorio_downloads}")
         options.add_experimental_option("prefs", {"download.default_directory":  diretorio_downloads, 
                                            "download.prompt_for_download": False, 
