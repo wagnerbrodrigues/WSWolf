@@ -6,7 +6,6 @@ set "env_name=wswolf"
 REM Criar ambiente virtual
 :: virtualenv %env_name%
 
-
 REM Ativar ambiente virtual
 :: all %env_name%\Scripts\activate
 
@@ -20,7 +19,7 @@ REM Subir o contêiner MySQL com o Docker Compose
 docker-compose -f %compose_file% up -d
 
 REM Esperar até que o contêiner do MySQL esteja pronto
-python wait-for-it.py
+python3 db\wait-for-it.py
 
 REM Nome do arquivo ZIP
 set "zip_file=mysql\dump.sql.zip"
@@ -34,12 +33,10 @@ powershell Expand-Archive -Path %zip_file% -DestinationPath %extracted_dir% -For
 REM Restaurar o banco de dados no MySQL
 set "backup_file=%extracted_dir%\dump.sql"
 
-REM Restaurar o banco de dados no MySQL
-set "mysql_host=localhost"
-set "mysql_user=root"  REM Substitua pelo usuário do MySQL definido no docker-compose.yml
-set "mysql_password=pass"  REM Substitua pela senha do MySQL definida no docker-compose.yml
-set "mysql_db=wswolf"  REM Substitua pelo nome do banco de dados definido no docker-compose.yml
+REM Ler as configurações do MySQL do arquivo mysql_config.conf dentro da subpasta db
+for /f "delims=" %%a in (db\mysql_config.conf) do set "%%a"
 
-docker exec -i mysql_scraper mysql -h %mysql_host% -u %mysql_user% -p%mysql_password% %mysql_db% < %backup_file%
+REM Restaurar o banco de dados no MySQL
+docker exec -i  %container_name%  mysql -h %host% -u %user% -p%password% %database% < %backup_file%
 
 echo Banco de dados restaurado com sucesso!

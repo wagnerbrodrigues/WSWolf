@@ -3,8 +3,7 @@ import pandas as pd
 from datetime import datetime
 
 from util.applogger import AppLogger
-from util.database import database
-from util.util import * 
+from mysql.database import database
 from util.config_opcoes_net import * 
 from util.navegador import Navegador
 

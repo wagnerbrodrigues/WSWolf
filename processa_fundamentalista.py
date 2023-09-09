@@ -1,12 +1,11 @@
 import math
-from util.database import database
-from datetime import datetime, timedelta
+from db.database import database
+from datetime import datetime
 import pandas as pd
 from util.applogger import AppLogger
 from decimal import Decimal, getcontext
 
 from util.config import * 
-from util.util import * 
 
 from tqdm import tqdm
 
@@ -130,10 +129,26 @@ class fundamentalista:
         menor_valor = min(valor_intrinseco, bazin12, bazin36, bazin60)
         #margem de 10% para a compra, em cima do menor valor
         return menor_valor * 0.9
+    
+    def compara_setor(self, dfinfo_acoes):
+        setores = dfinfo_acoes['setor']
+        setores = setores.unique()
+
+        for setor in setores:
+            dftemp = dfinfo_acoes[dfinfo_acoes['setor'] == setor]
+            dftemp = dftemp.sort_values(by=['roe', 'lpa', 'score'], ascending=False)
+            dftemp = dftemp.head(1)
+            
+            # Atualizando a coluna 'score' do dftemp
+            dftemp.loc[:, 'score'] = dftemp['score'] + 1
+
+            # Atualizando os valores no dfinfo_acoes com os valores atualizados do dftemp
+            dfinfo_acoes.loc[dftemp.index, 'score'] = dftemp['score']
+
+        return dfinfo_acoes
 
    
     def main(self):
-
         dfinfo_acoes = self.db.load_table_to_dataframe(view_ultima_coleta)
         dfDividendo = self.db.load_table_to_dataframe(tabela_dividendo)
         tqdm.pandas()
@@ -148,6 +163,11 @@ class fundamentalista:
             dfinfo_acoes.at[index, 'bazin60'] = self.calculo_Bazin(dfDividendo, 5)
             dfinfo_acoes.at[index, 'vlr_teto_margem'] = self.valor_teto_margem(dfinfo_acoes.iloc[index])
             dfinfo_acoes.at[index, 'score'] = self.indicadores_fundamentalistas(dfinfo_acoes.iloc[index])
+
+
+        dfinfo_acoes = self.compara_setor(dfinfo_acoes)
+  
+        dfinfo_acoes = dfinfo_acoes.drop(columns='setor')
 
         condicoes = ['cod_acao', 'dt_coleta']
         self.db.updateDB(tabela_coleta_acao, dfinfo_acoes, condicoes)

@@ -4,8 +4,6 @@ from rich.console import Console
 from scraper_acoes import scraper_acoes
 from processa_fundamentalista import fundamentalista
 from scraper_opcoes import scraper_opcoes
-from compara_carteira import compara_carteira
-from monta_carteira import monta_carteira
 #from processa_opcoes import processa_opcoes
 
 # Funções do menu
@@ -30,16 +28,6 @@ def funcao4():
     # del prossop
     print("Vai vir")
 
-def funcao5():
-    comp = compara_carteira()
-    comp.main()
-    del comp
-
-def funcao6():
-    mont = monta_carteira()
-    mont.main()
-    del mont
-
 def sair():
     print("Saindo do menu...")
     quit()
@@ -52,8 +40,6 @@ def exibir_menu():
     console.print("2. Processa Fundamentalista")
     console.print("3. Scraper Opções --Em construção", style="bold red")
     console.print("4. Processa Opções --Em construção", style="bold red")
-    console.print("5. Compara Carteiras --Melhorias", style="bold yellow")
-    console.print("6. Monta Carteira --Em construção", style="bold red")
     console.print("0. Sair")
 
 # Dicionário para mapear as opções do menu para as funções correspondentes
@@ -62,8 +48,6 @@ opcoes_menu = {
     "2": funcao2,
     "3": funcao3,
     "4": funcao4,
-    "5": funcao5,
-    "6": funcao6,
     "0": sair
 }
 

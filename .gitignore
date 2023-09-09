@@ -10,6 +10,7 @@ teste.py
 
 # Ignorar diretórios de dependências e bibliotecas
 /mysql/dbdata/
+/mysql/homol/
 /__pycache__/
 
 # Ignorar arquivos gerados durante a compilação

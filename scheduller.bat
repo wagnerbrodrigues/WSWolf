@@ -4,7 +4,7 @@ setlocal
 REM Defina o nome do arquivo de script Python
 set "script_coleta=scraper_acoes.py"
 set "script_processa=processa_fundamentalista.py"
-set "script_backup=\mysql\backup.py"
+set "script_backup=\db\backup.py"
 
 REM Obter o diretório atual
 for %%I in ("%~dp0") do set "diretorio_atual=%%~fI"

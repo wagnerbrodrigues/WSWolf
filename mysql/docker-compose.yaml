@@ -16,3 +16,4 @@ services:
       - ./dbdata:/var/lib/mysql
 volumes:
   dbdata:
+  

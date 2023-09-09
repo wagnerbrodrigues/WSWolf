@@ -3,3 +3,4 @@ rich==13.5.2
 selenium==4.11.2
 tqdm==4.65.0
 mysql-connector-python
+configparser
