@@ -3,8 +3,9 @@ import pandas as pd
 from datetime import datetime
 
 from util.applogger import AppLogger
-from mysql.database import database
+from db.database import database
 from util.config_opcoes_net import * 
+from util.config import *
 from util.navegador import Navegador
 
 
@@ -12,7 +13,7 @@ class scraper_opcoes:
     def __init__(self):
         self.dt_coleta = datetime.now().date()
         self.logger = AppLogger(log_scraper_opcoes)
-        self.nv = Navegador(chromeDriver,self.logger)
+        self.nv = Navegador(self.logger)
         self.db = database(self.logger)
 
     
@@ -80,8 +81,8 @@ class scraper_opcoes:
             url = f"https://opcoes.net.br/opcoes/bovespa/{acao}"
             self.logger.info(f"Realizando a leitura de: {url}")
 
-            self.nv.driver.get(url)
-            if not self.nv.pagina_ativa(element_div_datas):
+            #self.nv.driver.get(url)
+            if not self.nv.abrir_pgina(url,element_div_datas):
                 return None
 
             time.sleep(0.25)
