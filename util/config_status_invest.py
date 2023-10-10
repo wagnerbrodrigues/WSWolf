@@ -1,4 +1,8 @@
-element_vlr_acao = '//*[@id="main-2"]/div[2]/div/div[1]/div/div[1]/div/div[1]/strong'
+#element_vlr_acao = '//*[@id="main-2"]/div[2]/div/div[1]/div/div[1]/div/div[1]/strong'
+#element_vlm_diario = '/html/body/main/div[2]/div/div[5]/div/div/div[3]/div/div/div/strong'
+#element_dy= '/html/body/main/div[2]/div/div[1]/div/div[4]/div/div[1]/strong'
+
+element_vlr_acao = '/html/body/main/div[2]/div/div[1]/div/div[1]/div/div[1]/strong'
 element_vlm_diario = '/html/body/main/div[2]/div/div[5]/div/div/div[3]/div/div/div/strong'
 element_dy= '/html/body/main/div[2]/div/div[1]/div/div[4]/div/div[1]/strong'
 

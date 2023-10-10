@@ -165,7 +165,7 @@ class fundamentalista:
             dfinfo_acoes.at[index, 'score'] = self.indicadores_fundamentalistas(dfinfo_acoes.iloc[index])
 
 
-        dfinfo_acoes = self.compara_setor(dfinfo_acoes)
+       # dfinfo_acoes = self.compara_setor(dfinfo_acoes)
   
         dfinfo_acoes = dfinfo_acoes.drop(columns='setor')
 

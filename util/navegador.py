@@ -15,7 +15,7 @@ class Navegador:
         self.logger = logger
 
         options = webdriver.ChromeOptions()
-        options.add_argument("--headless=new")
+        #options.add_argument("--headless")
         options.add_argument('--ignore-certificate-errors')
         options.add_argument('--ignore-ssl-errors')
         options.accept_insecure_certs = True
