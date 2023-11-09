@@ -7,7 +7,7 @@ class database:
 
     def __init__(self, logger):
         currentDir = os.path.dirname(__file__) 
-        config_file_path = currentDir + '\mysql_config.conf'
+        config_file_path = currentDir + '\\mysql_config.conf'
         config = configparser.ConfigParser()
         config.read(config_file_path)
 
@@ -20,8 +20,6 @@ class database:
         self.con = self.get_database()
         self.logger = logger
 
- 
-
     def insertDB(self, table, df):
         if df.empty:
             self.logger.info("DataFrame está vazio. Nenhuma inserção será realizada.")
@@ -33,7 +31,6 @@ class database:
 
         # Iterar sobre as linhas do DataFrame
         try:
-            
             for _, row in df.iterrows():
                 # Gerar os placeholders para os valores
                 placeholders = "%s," * len(row)
@@ -90,20 +87,13 @@ class database:
 
         except Exception as e:
             self.logger.exception(f"load_table_to_dataframe: {e}, erro ao carregar a tabela {table}")
-
   
-    def load_table_to_dataframe_where(self, table, where_column=None, where_value=None):
+    def load_table_to_dataframe(self, table):
         cursor = self.con.cursor()
         sql = f"SELECT * FROM {table}"
 
-        if where_column : #and where_value:
-            sql += f" WHERE {where_column} = %s"
-            params = (where_value,)
-        else:
-            params = None
-
         try:
-            cursor.execute(sql, params)
+            cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             data = cursor.fetchall()
 
@@ -112,6 +102,36 @@ class database:
 
         except Exception as e:
             self.logger.exception(f"load_table_to_dataframe: {e}, erro ao carregar a tabela {table}")
+
+    def load_table_to_dataframe_where(self, table, where_column, where_value):
+        cursor = self.con.cursor()
+        sql = f"SELECT * FROM {table} WHERE {where_column} = %s"
+
+        try:
+            cursor.execute(sql, (where_value,))
+            columns = [column[0] for column in cursor.description]
+            data = cursor.fetchall()
+
+            df = pd.DataFrame(data, columns=columns)
+            return df
+
+        except Exception as e:
+            self.logger.exception(f"load_table_to_dataframe_where: {e}, erro ao carregar a tabela {table}")
+
+    def load_table_to_dataframe_where_list(self, table, where_column, where_values):
+        cursor = self.con.cursor()
+        sql = f"SELECT * FROM {table} WHERE {where_column} IN ({', '.join(['%s'] * len(where_values))})"
+
+        try:
+            cursor.execute(sql, where_values)
+            columns = [column[0] for column in cursor.description]
+            data = cursor.fetchall()
+
+            df = pd.DataFrame(data, columns=columns)
+            return df
+
+        except Exception as e:
+            self.logger.exception(f"load_table_to_dataframe_where_list: {e}, erro ao carregar a tabela {table}")
     
     def delete_from_table_where(self, table, where_column=None, where_value=None):
         cursor = self.con.cursor()

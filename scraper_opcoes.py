@@ -1,5 +1,4 @@
 import time
-import pandas as pd
 from datetime import datetime
 
 from util.applogger import AppLogger
@@ -19,8 +18,8 @@ class scraper_opcoes:
     
     def prepara_pagina(self):
         self.logger.info("Preparando a pagina")
-        radio_call = self.nv.pegar_elemento_por_xpath(element_radio_call)
-        radio_call.click()
+        # radio_call = self.nv.pegar_elemento_por_xpath(element_radio_call)
+        # radio_call.click()
 
         self.logger.info("Ajustando ranges de valor")
         self.nv.move_slider(element_slidder_mais, 60)
@@ -30,6 +29,7 @@ class scraper_opcoes:
         self.checkbox_data()
         self.logger.info("Download Arquivo")
         self.nv.espere_click_element_xpath(element_botao_export)
+        time.sleep(2)
 
     def checkbox_data(self):
         try:
@@ -52,29 +52,12 @@ class scraper_opcoes:
             if os.path.isfile(caminho_completo):
                 os.remove(caminho_completo)
 
-
-    def pega_ultimo_arquivo(self, acao):
-        lista_arquivo = os.listdir(diretorio_downloads)
-
-        arquivo_acao = [arquivo for arquivo in lista_arquivo if arquivo.endswith(".xlsx") and acao in arquivo]
-
-        # Ordena a lista de arquivos filtrados pela data de modificação (o último arquivo estará no final da lista)
-        arquivo_acao.sort(key=lambda x: os.path.getmtime(os.path.join(diretorio_downloads, x)))
-
-        # Obtém o último arquivo .xlsx da lista
-        return os.path.join(diretorio_downloads, arquivo_acao[-1])
-
-
-    def le_arquivo(self, acao):
-        nome_arquivo = self.pega_ultimo_arquivo(acao)
-        return pd.read_excel(nome_arquivo, skiprows=1)
-    
-
     def main(self):
         self.logger.info('*** INICIANDO LEITURA ***')
         self.limpa_diretorio()
+        score = [8,9,10]
 
-        dfUltimaCarteira = self.db.load_table_to_dataframe(view_ultima_carteira)
+        dfUltimaCarteira = self.db.load_table_to_dataframe_where_list(view_ultima_coleta, 'score', score )
 
         for index, row in dfUltimaCarteira.iterrows():
             acao = row['cod_acao']

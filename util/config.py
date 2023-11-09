@@ -22,5 +22,6 @@ log_scraper_acoes = diretorioWsWolf + '\\log\\scraper_opcoes.log'
 log_scraper_opcoes = diretorioWsWolf + '\\log\\scraper_opcoes.log'
 log_fundamentalista = diretorioWsWolf + '\\log\\fundamentalista.log'
 log_compara_carteira = diretorioWsWolf + '\\log\\compara_carteira.log'
+log_processa_opcoes = diretorioWsWolf + '\\log\\log_processa_opcoes.log'
 
 

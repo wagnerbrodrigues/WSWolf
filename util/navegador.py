@@ -31,7 +31,7 @@ class Navegador:
     def abrir_pgina(self, url, xpath):
         try:
             self.driver.get(url)
-            WebDriverWait(self.driver, 0.50).until(EC.presence_of_element_located((By.XPATH, xpath)))
+            WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, xpath)))
             return True
         except (NoSuchElementException, TimeoutException) as e:
             print(e)

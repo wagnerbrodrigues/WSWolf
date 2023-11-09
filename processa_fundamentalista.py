@@ -167,7 +167,8 @@ class fundamentalista:
 
        # dfinfo_acoes = self.compara_setor(dfinfo_acoes)
   
-        dfinfo_acoes = dfinfo_acoes.drop(columns='setor')
+        dfinfo_acoes = dfinfo_acoes.drop(columns=['setor', 'segto_atua'])
+        #dfinfo_acoes = dfinfo_acoes.drop(columns=)
 
         condicoes = ['cod_acao', 'dt_coleta']
         self.db.updateDB(tabela_coleta_acao, dfinfo_acoes, condicoes)

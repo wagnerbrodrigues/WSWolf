@@ -12,6 +12,7 @@ teste.py
 /mysql/dbdata/
 /mysql/homol/
 /__pycache__/
+*/__pycache__/
 
 # Ignorar arquivos gerados durante a compilação
 /build/

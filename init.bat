@@ -10,7 +10,7 @@ REM Ativar ambiente virtual
 :: all %env_name%\Scripts\activate
 
 REM Instalar dependências Python do requirements.txt
-python3 -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 REM Caminho para o arquivo docker-compose.yml
 set "compose_file=mysql\docker-compose.yaml"
@@ -19,7 +19,7 @@ REM Subir o contêiner MySQL com o Docker Compose
 docker-compose -f %compose_file% up -d
 
 REM Esperar até que o contêiner do MySQL esteja pronto
-python3 db\wait-for-it.py
+python db\wait-for-it.py
 
 REM Nome do arquivo ZIP
 set "zip_file=mysql\dump.sql.zip"
