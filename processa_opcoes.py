@@ -91,6 +91,8 @@ class processa_opcoes:
 
         dfOpcoes['ult_vlr'] = dfOpcoes['ult_vlr'].apply(lambda x: str(x).zfill(3)[:-2] + '.' + str(x).zfill(3)[-2:])
         dfOpcoes['strike'] = dfOpcoes['strike'].apply(lambda x: str(x).zfill(3)[:-2] + '.' + str(x).zfill(3)[-2:])
+        dfOpcoes['vol_finc'] = dfOpcoes['vol_finc'].str.replace(',', '').str.replace('.', '')
+        dfOpcoes['vol_finc'] = pd.to_numeric(dfOpcoes['vol_finc'])
         dfOpcoes['dt_vencimento'] = pd.to_datetime(dfOpcoes['dt_vencimento'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
         dfOpcoes['dt_ult_negocio'] = pd.to_datetime(dfOpcoes['dt_ult_negocio'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
 

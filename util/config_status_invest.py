@@ -13,6 +13,7 @@ element_vpa = '/html/body/main/div[2]/div/div[8]/div[2]/div/div[1]/div/div[9]/di
 element_roe = '/html/body/main/div[2]/div/div[8]/div[2]/div/div[4]/div/div[1]/div/div/strong'
 element_lpa = '/html/body/main/div[2]/div/div[8]/div[2]/div/div[1]/div/div[11]/div/div/strong'
 element_pebit = '/html/body/main/div[2]/div/div[8]/div[2]/div/div[1]/div/div[8]/div/div/strong'
+element_dlebit = '/html/body/main/div[2]/div/div[8]/div[2]/div/div[2]/div/div[3]/div/div/strong'
 # #element_pl= '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[2]/div/div/strong'
 # element_pvp= '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[4]/div/div/strong'
 # element_vpa= '/html/body/main/div[2]/div/div[7]/div[2]/div/div[1]/div/div[9]/div/div/strong'

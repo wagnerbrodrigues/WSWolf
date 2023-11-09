@@ -19,7 +19,8 @@ class ModelStatusInvest(Navegador):
             'vpa' : [super().pegar_valor_numerico_elemento_por_xpath(element_vpa)],
             'roe' : [super().pegar_valor_numerico_elemento_por_xpath(element_roe)],
             'lpa' : [super().pegar_valor_numerico_elemento_por_xpath(element_lpa)],
-            'pebit':  [super().pegar_valor_numerico_elemento_por_xpath(element_pebit)] 
+            'pebit':  [super().pegar_valor_numerico_elemento_por_xpath(element_pebit)] ,
+            'dlebit':  [super().pegar_valor_numerico_elemento_por_xpath(element_dlebit)] 
         }
         df = pd.DataFrame(data)
         return df

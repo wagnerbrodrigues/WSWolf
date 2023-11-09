@@ -27,6 +27,7 @@ class fundamentalista:
         bazin36 = row['bazin36']
         bazin60 = row['bazin60']
         pebit = row['pebit']
+        dlebit = row['dlebit']
         valor_teto_margem = row['vlr_teto_margem']
         valor_gordon = row['vlr_gordon']
 
@@ -42,6 +43,7 @@ class fundamentalista:
         if DY > 6: score += 1
         if PVP > 2: score -= 1
         if PVP > 0 and PVP < 1: score += 1
+        if dlebit > 0 and dlebit < 3: score += 1
 
         #score valores
         if valor_intrinseco > valor_atual : score += 1
@@ -130,23 +132,6 @@ class fundamentalista:
         #margem de 10% para a compra, em cima do menor valor
         return menor_valor * 0.9
     
-    def compara_setor(self, dfinfo_acoes):
-        setores = dfinfo_acoes['setor']
-        setores = setores.unique()
-
-        for setor in setores:
-            dftemp = dfinfo_acoes[dfinfo_acoes['setor'] == setor]
-            dftemp = dftemp.sort_values(by=['roe', 'lpa', 'score'], ascending=False)
-            dftemp = dftemp.head(1)
-            
-            # Atualizando a coluna 'score' do dftemp
-            dftemp.loc[:, 'score'] = dftemp['score'] + 1
-
-            # Atualizando os valores no dfinfo_acoes com os valores atualizados do dftemp
-            dfinfo_acoes.loc[dftemp.index, 'score'] = dftemp['score']
-
-        return dfinfo_acoes
-
    
     def main(self):
         dfinfo_acoes = self.db.load_table_to_dataframe(view_ultima_coleta)
@@ -164,11 +149,8 @@ class fundamentalista:
             dfinfo_acoes.at[index, 'vlr_teto_margem'] = self.valor_teto_margem(dfinfo_acoes.iloc[index])
             dfinfo_acoes.at[index, 'score'] = self.indicadores_fundamentalistas(dfinfo_acoes.iloc[index])
 
-
-       # dfinfo_acoes = self.compara_setor(dfinfo_acoes)
   
         dfinfo_acoes = dfinfo_acoes.drop(columns=['setor', 'segto_atua'])
-        #dfinfo_acoes = dfinfo_acoes.drop(columns=)
 
         condicoes = ['cod_acao', 'dt_coleta']
         self.db.updateDB(tabela_coleta_acao, dfinfo_acoes, condicoes)
