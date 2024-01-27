@@ -15,9 +15,4 @@ teste.py
 */__pycache__/
 
 # Ignorar arquivos gerados durante a compilação
-/build/
-/dist/
-
-# Ignorar arquivos de configuração específicos para cada desenvolvedor
-.env
-.env.local
+/venv/
