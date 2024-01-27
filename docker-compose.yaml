@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  wswolf:
+    build:
+      context: .
+      dockerfile: dockerfile
+    networks:
+      - mysql_net
+    volumes:
+      - ./log:/app/log  # Volume bind para a pasta /app/logs
+      - ./mysql/backup:/app/db/backup # Volume para o backup do MySQL
+      - ./.env:/app/db/.env
+
+
+networks:
+  mysql_net:
+    name: mysql_network
+    external: true   
