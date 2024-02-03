@@ -15,7 +15,7 @@ class Navegador:
         self.logger = logger
         self.driver= self._iniciar_driver()
     
-    def _iniciar_driver():
+    def _iniciar_driver(self):
         options = webdriver.ChromeOptions()
         options.add_argument("--headless")
         options.add_argument("--disable-gpu")
@@ -29,7 +29,6 @@ class Navegador:
         options.add_experimental_option("prefs", {"download.default_directory":  diretorio_downloads, 
                                            "download.prompt_for_download": False, 
                                            "download.directory_upgrade": True})
-
 
         service = Service()
 

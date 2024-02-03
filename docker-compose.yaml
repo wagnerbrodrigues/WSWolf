@@ -2,6 +2,7 @@ version: '3'
 
 services:
   wswolf:
+    container_name: wswolf
     build:
       context: .
       dockerfile: dockerfile

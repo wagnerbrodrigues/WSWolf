@@ -16,3 +16,4 @@ teste.py
 
 # Ignorar arquivos gerados durante a compilação
 /venv/
+/.venv/
