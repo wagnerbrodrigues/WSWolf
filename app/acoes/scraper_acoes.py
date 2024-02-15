@@ -22,22 +22,21 @@ class scraper_acoes:
         acao = row['cod_acao']
         #urlinvesting = row['url']
         url = f"https://statusinvest.com.br/acoes/{acao}"
-        
+
         self.logger.info(f'Lendo {acao}, URL {url}')
         try:
             if not self.msi.abrir_pgina(url, element_vlr_acao):
                 return None
-            
+
             dfPag = self.msi.indicadores_pagina(acao,self.dt_coleta)
             dfDividendo = self.msi.dividendo(acao, self.dt_coleta)
-            time.sleep(1)
+            #time.sleep(1)
 
             self.db.insertDB(tabela_coleta_acao, dfPag)
             self.db.delete_from_table_where(tabela_dividendo,'cod_acao',acao)
             self.db.insertDB(tabela_dividendo, dfDividendo)
         except Exception as e:
             self.logger.exception(f"Erro na coleta: {e}")
-    
 
     def main(self):
         dfacoes = self.db.load_table_to_dataframe(view_lista_para_coleta) 

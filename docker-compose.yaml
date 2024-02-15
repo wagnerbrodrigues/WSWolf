@@ -9,7 +9,7 @@ services:
     networks:
       - mysql_net
     volumes:
-      - ./log:/app/log  # Volume bind para a pasta /app/logs
+      - ./logs:/app/logs  # Volume bind para a pasta /app/logs
       - ./mysql/backup:/app/db/backup # Volume para o backup do MySQL
       - ./.env:/app/db/.env
 

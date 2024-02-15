@@ -3,7 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementNotInteractableException
 
@@ -34,25 +34,33 @@ class Navegador:
 
         return webdriver.Chrome(service=service, options=options)  
   
-    def abrir_pgina(self, url, xpath):
+    def abrir_pgina(self, url, xpath, reiniciado=False):
         try:
             self.driver.get(url)
             WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((By.XPATH, xpath)))
             return True
-        except (NoSuchElementException, TimeoutException) as e:
-            print(e)
+        except WebDriverException as e:
             #tenta reiniciar o driver em caso de erro
-            self.logger.info(f"Erro ao abrir pagina {self.driver.current_url}")
-            self.reiniciar_driver()
+            self.logger.info(f"Erro no navegador. Criando um novo Driver: {e}")
+            #verifica se já foi reiniciado, para não ficar em loop.
+            if not reiniciado:
+                return self._reiniciar_driver(url, xpath)
+            else:
+                return False
+        except (NoSuchElementException, TimeoutException, Exception) as e:
+            self.logger.info(f"Erro ao abrir pagina {self.driver.current_url} : {e}")
             return False
-        
-    def reiniciar_driver(self):
+
+    def _reiniciar_driver(self, url, xpath):
         try:
             self.driver.quit()  # Fecha a sessão atual
             self.driver = self._iniciar_driver()  # Inicia uma nova sessão do driver
             self.logger.info("Sessão do driver reiniciada com sucesso.")
+            self.abrir_pgina(url, xpath, reiniciado=True)
+            return True
         except Exception as e:
             self.logger.error(f"Erro ao reiniciar sessão do driver: {e}")
+            return False
 
 
     def pegar_valor_numerico_elemento_por_xpath(self, xpath):

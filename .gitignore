@@ -7,13 +7,13 @@ teste.py
 *.xlsx
 *.sql
 *.bak
+*.txt
 
 # Ignorar diretórios de dependências e bibliotecas
 /mysql/dbdata/
 /mysql/homol/
-/__pycache__/
-*/__pycache__/
+__pycache__/
 
 # Ignorar arquivos gerados durante a compilação
-/venv/
-/.venv/
+venv/
+.venv/

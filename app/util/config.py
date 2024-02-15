@@ -16,11 +16,11 @@ currentDir = os.path.dirname(__file__)
 diretorioWsWolf = os.path.dirname(currentDir)
 diretorio_downloads = os.path.join(currentDir, "downloads")
 
-log_scraper_acoes = os.path.join(diretorioWsWolf, 'log', 'scraper_acoes.log')
-log_scraper_opcoes = os.path.join(diretorioWsWolf, 'log', 'scraper_opcoes.log')
-log_fundamentalista = os.path.join(diretorioWsWolf, 'log', 'fundamentalista.log')
-log_compara_carteira = os.path.join(diretorioWsWolf, 'log', 'compara_carteira.log')
-log_processa_opcoes = os.path.join(diretorioWsWolf, 'log', 'log_processa_opcoes.log')
-log_main = os.path.join(diretorioWsWolf, 'log', 'log_main.log')
+log_scraper_acoes = os.path.join(diretorioWsWolf, 'logs', 'scraper_acoes.log')
+log_scraper_opcoes = os.path.join(diretorioWsWolf, 'logs', 'scraper_opcoes.log')
+log_fundamentalista = os.path.join(diretorioWsWolf, 'logs', 'fundamentalista.log')
+log_compara_carteira = os.path.join(diretorioWsWolf, 'logs', 'compara_carteira.log')
+log_processa_opcoes = os.path.join(diretorioWsWolf, 'logs', 'log_processa_opcoes.log')
+log_main = os.path.join(diretorioWsWolf, 'logs', 'log_main.log')
 
 
