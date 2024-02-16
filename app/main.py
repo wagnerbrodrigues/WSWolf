@@ -27,7 +27,7 @@ if __name__ == "__main__":
     # proc_opcoes.main()
     # del proc_opcoes
 
-    # bkp = Backup()
-    # bkp.execute_mysql_dump()
-    # del bkp
+    bkp = Backup()
+    bkp.execute_mysql_dump()
+    del bkp
 
