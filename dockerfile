@@ -7,8 +7,11 @@ COPY /app /app
 WORKDIR /app
 
 # Instalação do Chromium
-RUN apk add chromium
-RUN apk add chromium-chromedriver
+RUN apk --no-cache add chromium
+RUN apk --no-cache add chromium-chromedriver
+
+RUN apk --no-cache add mariadb-connector-c
+RUN apk --no-cache add mysql-client
 
 ENV PYDEVD_DISABLE_FILE_VALIDATION=1
 

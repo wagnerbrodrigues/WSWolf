@@ -31,9 +31,22 @@ while IFS='=' read -r key value; do
     esac
 done < <(grep -E '^(DB_HOST|DB_ROOTUSER|DB_ROOT_PASSWORD|DB_NAME|CONTAINER_NAME)=' .env)
 
+
+# Função para verificar se o MySQL está pronto para conexão
+wait_for_mysql() {
+    
+    until docker exec "$container_name" mysqladmin ping -h"$host" --silent; do
+        echo "Aguardando o MySQL estar pronto para conexão..."
+        sleep 1
+    done
+}
+
 # Subir o contêiner MySQL com o Docker Compose
 if docker-compose -f "$mysql_compose_file" up --build -d; then
     echo "Contêiner MySQL iniciado com sucesso."
+    # Aguardar até que o MySQL esteja pronto para conexão
+    wait_for_mysql
+    echo "MySQL está pronto para conexão."
 else
     echo "Erro ao iniciar o contêiner MySQL."
     exit 1
@@ -41,7 +54,6 @@ fi
 
 # Descompactar o arquivo ZIP
 unzip -o "$zip_file" -d "$extracted_dir"
-
 
 # Restaurar o banco de dados no MySQL
 docker exec -i "$container_name" mysql -h "$host" -u "$root_user" -p"$password" "$database" < "$backup_file" || true

@@ -36,7 +36,7 @@ else
 fi
 
 
-Remover o contêiner anterior
+#Remover o contêiner anterior
 if docker-compose -f "$wswolf_compose_file" down; then
    echo "Contêiner anterior removido com sucesso."
 else
