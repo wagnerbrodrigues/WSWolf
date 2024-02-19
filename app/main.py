@@ -1,3 +1,5 @@
+import sys
+
 from acoes.scraper_acoes import scraper_acoes
 from acoes.processa_fundamentalista import fundamentalista
 
@@ -30,4 +32,7 @@ if __name__ == "__main__":
     bkp = Backup()
     bkp.execute_mysql_dump()
     del bkp
+
+    sys.exit()  # Encerrar o programa
+
 
