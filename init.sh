@@ -23,8 +23,8 @@ echo " ╚══╝╚══╝ ╚══════╝ ╚══╝╚══�
 echo "      "
 
 # Validações
-if ! command -v unzip &> /dev/null; then
-    echo "unzip não está instalado. Por favor, instale-o."
+if ! command -v gzip &> /dev/null; then
+    echo "gzip não está instalado. Por favor, instale-o."
     exit 1
 fi
 
