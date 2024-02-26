@@ -98,7 +98,7 @@ class fundamentalista:
     def calculo_Bazin(self, df, periodo):
         media = self.media_por_periodo(df, periodo)
         #soma_valor = df['valor'].sum()
-        return  (media * 100) / 6
+        return  (media * 100) / 7
 
     def calcular_gordon(self, df, taxa_retorno):
         if df.empty:
