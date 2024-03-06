@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Caminho para o arquivo docker-compose.yml
 mysql_compose_file="docker-compose-mysql.yaml"
 
