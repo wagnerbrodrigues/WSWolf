@@ -8,6 +8,7 @@ config.read(config_file_path)
 
 host = config['MySQL']['DB_HOST']
 user = config['MySQL']['DB_USERNAME']
+root = config['MySQL']['DB_USERNAME']
 port = int(config['MySQL']['DB_PORT'])
 password = config['MySQL']['DB_PASSWORD']
 dbname = config['MySQL']['DB_NAME']

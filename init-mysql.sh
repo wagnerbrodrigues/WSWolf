@@ -3,14 +3,22 @@
 # Caminho para o arquivo docker-compose.yml
 mysql_compose_file="docker-compose-mysql.yaml"
 
-# Nome do arquivo comprimido com gzip
-gzip_file="mysql/backup/dump.sql.gz"
-
 # Caminho para o diretório de destino da descompactação
-extracted_dir="mysql"
+extracted_dir="mysql/backup"
+
+# Nome do arquivo comprimido com gzip
+gzip_file="$extracted_dir/dump.sql.gz"
 
 # Restaurar o banco de dados no MySQL
 backup_file="$extracted_dir/dump.sql"
+
+if gzip -dfk "$gzip_file"; then
+    echo "Descompactação bem-sucedida!"
+    # Continue com outras operações aqui
+else
+    echo "Erro durante a descompactação!"
+    exit 1  # Saia do script com código de erro
+fi
 
 # Inicialização das variáveis
 host=""
@@ -52,12 +60,10 @@ else
     exit 1
 fi
 
-# Descompactar o arquivo gzip
-gzip -d -f "$gzip_file" 
-
 # Restaurar o banco de dados no MySQL
 if docker exec -i "$container_name" mysql -h "$host" -u "$root_user" -p"$password" "$database" < "$backup_file"; then
     echo "Banco de dados restaurado com sucesso!"
 else
     echo "Erro ao restaurar o banco de dados."
+    exit 1
 fi

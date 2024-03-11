@@ -16,6 +16,7 @@ class Backup:
             # Comando para realizar o dump diretamente no sistema
             dump_command = [
                 'mysqldump',
+                f'--no-tablespaces',
                 f'--host={host}',
                 f'--user={user}',
                 f'--password={password}',

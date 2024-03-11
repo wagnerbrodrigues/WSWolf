@@ -47,16 +47,12 @@ fi
 wswolf_compose_file="docker-compose.yaml"
 
 #Iniciar MySQL
-bash init-mysql.sh
-
-
-# Verificar o retorno do comando anterior
-if [ $? -eq 0 ]; then
+if bash init-mysql.sh; then
     echo "MySQL iniciado com sucesso."
 else
     echo "Erro ao iniciar o MySQL. Código de retorno: $?"
+    exit 1
 fi
-
 
 #Remover o contêiner anterior
 if docker-compose -f "$wswolf_compose_file" down; then
