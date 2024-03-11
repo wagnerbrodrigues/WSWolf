@@ -22,6 +22,9 @@ echo "╚███╔███╔╝███████║╚███╔█�
 echo " ╚══╝╚══╝ ╚══════╝ ╚══╝╚══╝  ╚═════╝ ╚══════╝╚═╝     "
 echo "      "
 
+#Variaveis
+wswolf_compose_file="docker-compose.yaml"
+
 # Validações
 if ! command -v gzip &> /dev/null; then
     echo "gzip não está instalado. Por favor, instale-o."
@@ -43,8 +46,6 @@ if ! docker info &> /dev/null; then
     echo "O Docker não está em execução. Por favor, inicie o Docker e tente novamente."
     exit 1
 fi
-
-wswolf_compose_file="docker-compose.yaml"
 
 #Iniciar MySQL
 if bash init-mysql.sh; then
