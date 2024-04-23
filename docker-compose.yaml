@@ -6,12 +6,18 @@ services:
     build:
       context: .
       dockerfile: dockerfile
+      args:
+        - fator_bazin=${fator_bazin}
+        - param=${param}
     networks:
       - mysql_net
     volumes:
       - ./logs:/app/logs  # Volume bind para a pasta /app/logs
       - ./mysql/backup:/app/db/backup # Volume para o backup do MySQL
       - ./.env:/app/db/.env
+    environment:
+      fator_bazin: ${fator_bazin}
+      param: ${param}
 
 
 networks:

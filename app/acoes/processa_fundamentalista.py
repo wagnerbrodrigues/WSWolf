@@ -10,11 +10,12 @@ from util.config import *
 from tqdm import tqdm
 
 class fundamentalista:
-    def __init__(self):
+    def __init__(self, fator_bazin=6):
         self.logger = AppLogger(log_fundamentalista)
         self.db = database(self.logger)
+        self.fator_bazin = fator_bazin
         
-    def indicadores_fundamentalistas(self, row):
+    def indicadores_fundamentalistas(self, row) -> int:
         score = 0
         PL = row['pl']
         volume_diario = row['vlm_diario']
@@ -60,7 +61,7 @@ class fundamentalista:
         return score
 
 
-    def calcular_valor_intrinseco(self, vpa, lpa):
+    def calcular_valor_intrinseco(self, vpa, lpa) -> Decimal:
         #Calcula o valor intrínseco de uma ação usando a fórmula de Graham.
         try:
             return math.sqrt(22.5 * vpa * lpa)
@@ -68,7 +69,7 @@ class fundamentalista:
             print(e)
             return 0
 
-    def media_por_periodo(self, df, num_periodos):
+    def media_por_periodo(self, df, num_periodos) -> Decimal:
 
         # # Converter a coluna de data para o tipo datetime, se necessário
         if not pd.api.types.is_datetime64_any_dtype(df['dt_comunicado']):
@@ -95,12 +96,11 @@ class fundamentalista:
         return media_valores
 
 
-    def calculo_Bazin(self, df, periodo):
+    def calculo_Bazin(self, df, periodo) -> Decimal:
         media = self.media_por_periodo(df, periodo)
-        #soma_valor = df['valor'].sum()
-        return  (media * 100) / 6
+        return  (media * 100) / self.fator_bazin
 
-    def calcular_gordon(self, df, taxa_retorno):
+    def calcular_gordon(self, df, taxa_retorno)-> Decimal:
         if df.empty:
             return None  # Retorna None se o DataFrame estiver vazio
 
@@ -124,7 +124,7 @@ class fundamentalista:
         return preco_justo
 
 
-    def valor_teto_margem(self, row):
+    def valor_teto_margem(self, row)-> Decimal:
         valor_intrinseco = row['vlr_intrinseco']
         bazin12 = row['bazin12']
         bazin36 = row['bazin36']
@@ -136,7 +136,7 @@ class fundamentalista:
         return menor_valor * 0.9
     
    
-    def main(self):
+    def main(self) -> None:
         dfinfo_acoes = self.db.load_table_to_dataframe(view_ultima_coleta)
         dfDividendo = self.db.load_table_to_dataframe(tabela_dividendo)
         tqdm.pandas()

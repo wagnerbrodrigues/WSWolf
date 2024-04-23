@@ -24,6 +24,9 @@ echo "      "
 
 #Variaveis
 wswolf_compose_file="docker-compose.yaml"
+export fator_bazin=7
+#export param="fundamentalista"
+
 
 # Validações
 if ! command -v gzip &> /dev/null; then
