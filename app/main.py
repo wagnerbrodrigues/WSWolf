@@ -5,8 +5,9 @@ from opcoes.scraper_opcoes import scraper_opcoes
 from opcoes.processa_opcoes import processa_opcoes
 from db.backup import Backup
 
-parametros = set(os.getenv("param", "").split(","))
-fator_bazin = int(os.getenv("fator_bazin", 6))
+parametros_raw: str = os.getenv("param", "")
+parametros: list = set(item.strip() for item in parametros_raw.split(",") if item.strip())
+fator_bazin: int = int(os.getenv("fator_bazin", 6))
 
 def scraper():
     scpp = scraper_acoes()
@@ -33,8 +34,6 @@ def execute_backup():
     del bkp
 
 def main():
-
-    print(parametros)
     if len(parametros) > 0:
         if "scraper" in parametros:
             scraper()

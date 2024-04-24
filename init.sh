@@ -25,7 +25,7 @@ echo "      "
 #Variaveis
 wswolf_compose_file="docker-compose.yaml"
 export fator_bazin=7
-#export param="fundamentalista"
+#export param="fundamentalista,backup"
 
 
 # Validações
