@@ -21,14 +21,29 @@ echo "██║███╗██║╚════██║██║███�
 echo "╚███╔███╔╝███████║╚███╔███╔╝╚██████╔╝███████╗██║     "
 echo " ╚══╝╚══╝ ╚══════╝ ╚══╝╚══╝  ╚═════╝ ╚══════╝╚═╝     "
 echo "      "
+echo "Exemplo de Uso: $0 --param=\"fundamentalista,backup\" --bazin=6"
 
-#Variaveis
+# Inicialização das variáveis
+param=""
+fator_bazin=""
+
+# Leitura dos parâmetros
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --param=*) param="${1#*=}"; shift ;;
+        --bazin=*) fator_bazin="${1#*=}"; shift ;;
+        *) echo "Opção inválida: $1" >&2; exit 1 ;;
+    esac
+done
+
+# Variável
 wswolf_compose_file="docker-compose.yaml"
-export fator_bazin=7
-#export param="fundamentalista,backup"
 
+# Exportação
+export fator_bazin
+export param
 
-# Validações
+# Validações de dependências
 if ! command -v gzip &> /dev/null; then
     echo "gzip não está instalado. Por favor, instale-o."
     exit 1
@@ -50,7 +65,7 @@ if ! docker info &> /dev/null; then
     exit 1
 fi
 
-#Iniciar MySQL
+# Iniciar MySQL
 if bash init-mysql.sh; then
     echo "MySQL iniciado com sucesso."
 else
@@ -58,13 +73,14 @@ else
     exit 1
 fi
 
-#Remover o contêiner anterior
+# Remover o contêiner anterior
 if docker-compose -f "$wswolf_compose_file" down; then
    echo "Contêiner anterior removido com sucesso."
 else
    echo "Erro ao remover o contêiner anterior."
 fi
 
+# Iniciar o contêiner
 if docker-compose -f "$wswolf_compose_file" up --build -d; then
     echo "Contêiner WsWolf iniciado com sucesso"
 else
