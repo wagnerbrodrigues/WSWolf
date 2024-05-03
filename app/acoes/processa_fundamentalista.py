@@ -47,89 +47,48 @@ class fundamentalista:
         if PVP > 0 and PVP < 1: score += 1
         if dlebit > 0 and dlebit < 3: score += 1
 
-        #score valores
-        if valor_intrinseco > valor_atual : score += 1
-        if bazin12 > valor_atual: score +=1
-        if bazin36 > valor_atual: score +=1
-        if bazin60 > valor_atual: score +=1
-        if valor_teto_margem > valor_atual : score += 1
-        if valor_teto_margem == 0 : score -= 1
         if tag_along == 100 : score += 1
         if tag_along == 0 : score -= 1
-    #  if valor_gordon > valor_atual : score +=1
 
         return score
 
 
     def calcular_valor_intrinseco(self, vpa, lpa) -> Decimal:
-        #Calcula o valor intrínseco de uma ação usando a fórmula de Graham.
+        # Se existirem valores negativos, não retorna o calculo
+        if vpa < 0 or lpa < 0:
+            return 0 
+
         try:
             return math.sqrt(22.5 * vpa * lpa)
-        except Exception as e:
+        except ValueError as e:
             print(e)
             return 0
 
     def media_por_periodo(self, df, num_periodos) -> Decimal:
+        # Garantir que a coluna 'dt_comunicado' está no formato datetime
+        df['dt_comunicado'] = pd.to_datetime(df['dt_comunicado'], errors='coerce')
 
-        # # Converter a coluna de data para o tipo datetime, se necessário
-        if not pd.api.types.is_datetime64_any_dtype(df['dt_comunicado']):
-            df['dt_comunicado'] = pd.to_datetime(df['dt_comunicado'])
+        # Calcular a data inicial para o cálculo da média
+        data_inicial = datetime.now() - pd.DateOffset(months=12 * num_periodos)
 
-        # Ordenar o DataFrame por data em ordem decrescente
-        df = df.sort_values('dt_comunicado', ascending=False)
-
-        # Obter a data atual
-        data_atual = datetime.now().date()
-
-        # Filtrar o DataFrame para manter apenas as linhas que correspondem aos últimos 5 períodos
-        data_inicial = data_atual - pd.DateOffset(months=12 * num_periodos)
-
-        # Filtrar o DataFrame para manter apenas as linhas dentro do período de filtragem
+        # Filtrar o DataFrame para registros dentro do período desejado
         df_filtrado = df[df['dt_comunicado'] >= data_inicial]
 
-        # Calcular a soma dos valores
-        soma_valores = df_filtrado['vlr'].sum()
+        # Calcular a média dos valores
+        media_valores = df_filtrado['vlr'].sum() / num_periodos
 
-        # Calcular a média dos valores por ano
-        media_valores = soma_valores / num_periodos
-
-        return media_valores
+        return Decimal(media_valores)
 
 
     def calculo_Bazin(self, df, periodo) -> Decimal:
         media = self.media_por_periodo(df, periodo)
         return  (media * 100) / self.fator_bazin
 
-    def calcular_gordon(self, df, taxa_retorno)-> Decimal:
-        if df.empty:
-            return None  # Retorna None se o DataFrame estiver vazio
-
-        # Configurar a precisão decimal
-        getcontext().prec = 28
-
-        # Calcular o valor presente dos dividendos
-        valor_presente = Decimal(0)
-        for index, row in df.iterrows():
-            valor_presente += Decimal(row['vlr']) / ((Decimal(1) + Decimal(taxa_retorno)) ** (index + 1))
-
-        # Calcular a taxa de crescimento dos dividendos
-        if df['vlr'].iloc[0] != 0:
-            taxa_crescimento = (Decimal(df['vlr'].iloc[-1]) / Decimal(df['vlr'].iloc[0])) - Decimal(1)
-        else:
-            taxa_crescimento = Decimal(0)  # ou qualquer outro valor adequado
-
-        # Calcular o preço justo da ação
-        preco_justo = float(valor_presente / (Decimal(taxa_retorno) - taxa_crescimento))
-
-        return preco_justo
-
-
     def valor_teto_margem(self, row)-> Decimal:
         valor_intrinseco = row['vlr_intrinseco']
         bazin12 = row['bazin12']
         bazin36 = row['bazin36']
         bazin60 = row['bazin60']
-        valor_gordon = row['vlr_gordon']
         #determina o menor valor encontrado para a acao
         menor_valor = min(valor_intrinseco, bazin12, bazin36, bazin60)
         #margem de 10% para a compra, em cima do menor valor
