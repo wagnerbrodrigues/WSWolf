@@ -3,7 +3,7 @@ from db.database import database
 from datetime import datetime
 import pandas as pd
 from util.applogger import AppLogger
-from decimal import Decimal, getcontext
+from decimal import Decimal
 
 from util.config import * 
 
@@ -20,18 +20,13 @@ class fundamentalista:
         PL = row['pl']
         volume_diario = row['vlm_diario']
         DY = row['dy']
-        valor_intrinseco = row['vlr_intrinseco']
         valor_atual = row['vlr_acao']
         ROE = row['roe']
         PVP = row['pvp']
-        bazin12 = row['bazin12']
-        bazin36 = row['bazin36']
-        bazin60 = row['bazin60']
         pebit = row['pebit']
         dlebit = row['dlebit']
-        valor_teto_margem = row['vlr_teto_margem']
-        valor_gordon = row['vlr_gordon']
         tag_along = row['tag_along']
+        VPA = row['vpa']
 
         #empresa inoperavel 
         if volume_diario < 3000000.00: return 0
@@ -44,6 +39,7 @@ class fundamentalista:
         if ROE > 0 : score += 1
         if DY > 6: score += 1
         if PVP > 2: score -= 1
+        if VPA > valor_atual: score -= 1
         if PVP > 0 and PVP < 1: score += 1
         if dlebit > 0 and dlebit < 3: score += 1
 
@@ -53,18 +49,19 @@ class fundamentalista:
         return score
 
 
-    def calcular_valor_intrinseco(self, vpa, lpa) -> Decimal:
+    def calcular_valor_intrinseco(self, vpa, lpa) :
         # Se existirem valores negativos, não retorna o calculo
         if vpa < 0 or lpa < 0:
-            return 0 
+            return float(0)
 
         try:
-            return math.sqrt(22.5 * vpa * lpa)
+            result = math.sqrt(22.5 * vpa * lpa)
+            return float(result)
         except ValueError as e:
             print(e)
-            return 0
+            return float(0)
 
-    def media_por_periodo(self, df, num_periodos) -> Decimal:
+    def media_por_periodo(self, df, num_periodos) -> float:
         # Garantir que a coluna 'dt_comunicado' está no formato datetime
         df['dt_comunicado'] = pd.to_datetime(df['dt_comunicado'], errors='coerce')
 
@@ -77,14 +74,15 @@ class fundamentalista:
         # Calcular a média dos valores
         media_valores = df_filtrado['vlr'].sum() / num_periodos
 
-        return Decimal(media_valores)
+        return float(media_valores)
 
 
-    def calculo_Bazin(self, df, periodo) -> Decimal:
+    def calculo_Bazin(self, df, periodo) -> float:
         media = self.media_por_periodo(df, periodo)
-        return  (media * 100) / self.fator_bazin
+        result = (media * 100) / self.fator_bazin
+        return float(result)
 
-    def valor_teto_margem(self, row)-> Decimal:
+    def valor_teto_margem(self, row)-> float:
         valor_intrinseco = row['vlr_intrinseco']
         bazin12 = row['bazin12']
         bazin36 = row['bazin36']
@@ -92,7 +90,7 @@ class fundamentalista:
         #determina o menor valor encontrado para a acao
         menor_valor = min(valor_intrinseco, bazin12, bazin36, bazin60)
         #margem de 10% para a compra, em cima do menor valor
-        return menor_valor * 0.9
+        return float(menor_valor * 0.9)
     
    
     def main(self) -> None:
