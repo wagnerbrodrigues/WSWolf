@@ -24,24 +24,27 @@ echo "      "
 echo "Exemplo de Uso: $0 --param=\"fundamentalista,backup\" --bazin=6"
 
 # Inicialização das variáveis
+wswolf_compose_file="docker-compose.yaml"
+
 param=""
 fator_bazin=""
+init_mysql="no"  # Se a execução é para iniciar o mysql
+
 
 # Leitura dos parâmetros
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --param=*) param="${1#*=}"; shift ;;
         --bazin=*) fator_bazin="${1#*=}"; shift ;;
+        --init-mysql) init_mysql="yes"; shift ;;
         *) echo "Opção inválida: $1" >&2; exit 1 ;;
     esac
 done
 
-# Variável
-wswolf_compose_file="docker-compose.yaml"
-
 # Exportação
 export fator_bazin
 export param
+
 
 # Validações de dependências
 if ! command -v gzip &> /dev/null; then
@@ -71,6 +74,11 @@ if bash init-mysql.sh; then
 else
     echo "Erro ao iniciar o MySQL. Código de retorno: $?"
     exit 1
+fi
+
+# Se a opção de iniciar MySQL foi passada, finaliza apos inicialização. Essa opção serve somente para iniciar o database.
+if [[ $init_mysql == "yes" ]]; then
+    exit 0
 fi
 
 # Remover o contêiner anterior
