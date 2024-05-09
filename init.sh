@@ -24,7 +24,9 @@ echo "      "
 echo "Exemplo de Uso: $0 --param=\"fundamentalista,backup\" --bazin=6"
 
 # Inicialização das variáveis
-wswolf_compose_file="docker-compose.yaml"
+# Determina o diretório onde o script atual está localizado
+current_dir="$(dirname "$0")"
+wswolf_compose_file="$current_dir/docker-compose.yaml"
 
 param=""
 fator_bazin=""
@@ -69,7 +71,7 @@ if ! docker info &> /dev/null; then
 fi
 
 # Iniciar MySQL
-if bash init-mysql.sh; then
+if bash "$current_dir/init-mysql.sh"; then
     echo "MySQL iniciado com sucesso."
 else
     echo "Erro ao iniciar o MySQL. Código de retorno: $?"

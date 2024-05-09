@@ -1,16 +1,22 @@
 #!/bin/bash
 
-# Caminho para o arquivo docker-compose.yml
-mysql_compose_file="docker-compose-mysql.yaml"
+# Determina o diretório onde o script atual está localizado
+current_dir="$(dirname "$0")"
+
+# Define o caminho para o arquivo docker-compose-mysql.yaml
+mysql_compose_file="$current_dir/docker-compose-mysql.yaml"
 
 # Caminho para o diretório de destino da descompactação
-extracted_dir="mysql/backup"
+extracted_dir="$current_dir/mysql/backup"
 
 # Nome do arquivo comprimido com gzip
 gzip_file="$extracted_dir/dump.sql.gz"
 
 # Restaurar o banco de dados no MySQL
 backup_file="$extracted_dir/dump.sql"
+
+# Define o caminho para o arquivo .env
+env_file="$current_dir/.env"
 
 if gzip -dfk "$gzip_file"; then
     echo "Descompactação bem-sucedida!"
@@ -27,7 +33,7 @@ password=""
 database=""
 container_name=""
 
-# Ler as configurações do MySQL do arquivo mysql_config.conf dentro da subpasta db
+# Ler as configurações do MySQL do arquivo .env dentro da subpasta
 while IFS='=' read -r key value; do
     key=$(echo $key | tr -d '[:space:]')  # Remover espaços em branco
     value=$(echo $value | tr -d '[:space:]')
@@ -39,14 +45,31 @@ while IFS='=' read -r key value; do
         "DB_NAME") database="$value" ;;
         "CONTAINER_NAME") container_name="$value" ;;
     esac
-done < <(grep -E '^(DB_HOST|DB_ROOTUSER|DB_ROOT_PASSWORD|DB_NAME|CONTAINER_NAME)=' .env)
+done < <(grep -E '^(DB_HOST|DB_ROOTUSER|DB_ROOT_PASSWORD|DB_NAME|CONTAINER_NAME)=' "$env_file")
 
-# Função para verificar se o MySQL está pronto para conexão
+# Verificar se todas as variáveis necessárias foram definidas
+if [ -z "$host" ] || [ -z "$root_user" ] || [ -z "$password" ] || [ -z "$database" ] || [ -z "$container_name" ]; then
+    echo "Erro: Uma ou mais variáveis essenciais não estão definidas no arquivo .env."
+    exit 1
+fi
+
+
 wait_for_mysql() {
+    local timeout=30
+    local count=0
+
     until docker exec "$container_name" mysqladmin ping -h"$host" --silent; do
-        echo "Aguardando o MySQL estar pronto para conexão..."
+        if [ $count -ge $timeout ]; then
+            echo "Timeout: O MySQL ($container_name) não está pronto para conexão após $timeout segundos."
+            exit 1
+        fi
+
+        echo "Aguardando o MySQL($container_name) estar pronto para conexão..."
         sleep 1
+        ((count++))
     done
+
+    echo "MySQL ($container_name) está pronto para conexão."
 }
 
 # Subir o contêiner MySQL com o Docker Compose
