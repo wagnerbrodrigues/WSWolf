@@ -2,6 +2,7 @@ FROM python:alpine3.19
 
 ARG fator_bazin
 ARG param
+ARG meses_bazin
 
 # Copia o conteúdo local para o contêiner no diretório /app
 COPY /app /app
@@ -18,6 +19,7 @@ RUN apk --no-cache add mysql-client
 
 ENV PYDEVD_DISABLE_FILE_VALIDATION=1
 ENV fator_bazin=$fator_bazin
+ENV meses_bazin=$meses_bazin
 ENV param=$param
 
 # Instalação das dependências Python

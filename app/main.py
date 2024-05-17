@@ -7,7 +7,13 @@ from db.backup import Backup
 
 parametros_raw: str = os.getenv("param", "")
 parametros: list = set(item.strip() for item in parametros_raw.split(",") if item.strip())
-fator_bazin: int = int(os.getenv("fator_bazin", 6))
+
+fator_bazin_str = os.getenv("fator_bazin", "6")
+fator_bazin = int(fator_bazin_str) if fator_bazin_str.isdigit() else 6
+
+meses_bazin_str = os.getenv("meses_bazin", "60")
+meses_bazin = int(meses_bazin_str) if meses_bazin_str.isdigit() else 60
+
 
 def scraper():
     scpp = scraper_acoes()
@@ -15,7 +21,7 @@ def scraper():
     del scpp
 
 def fundamenta():
-    proc_acoes = fundamentalista(fator_bazin=fator_bazin)
+    proc_acoes = fundamentalista(fator_bazin=fator_bazin,meses_bazin=meses_bazin)
     proc_acoes.main()
     del proc_acoes
 
@@ -42,7 +48,6 @@ def main():
         if "backup" in parametros:
             execute_backup()
     else:
-        print("else")
         scraper()
         fundamenta()
         execute_backup()

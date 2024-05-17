@@ -8,6 +8,7 @@ services:
       dockerfile: dockerfile
       args:
         - fator_bazin=${fator_bazin}
+        - meses_bazin=${meses_bazin}
         - param=${param}
     networks:
       - mysql_net
