@@ -5,9 +5,9 @@ import pandas as pd
 from tqdm import tqdm
 from decimal import Decimal
 from util.applogger import AppLogger
+from sklearn.linear_model import LinearRegression
 
 from util.config import * 
-
 
 class fundamentalista:
     def __init__(self, fator_bazin=6, meses_bazin=60):
@@ -15,6 +15,19 @@ class fundamentalista:
         self.db = database(self.logger)
         self._fator_bazin = fator_bazin
         self._meses_bazin = meses_bazin
+
+    # Função para verificar se a tendência é de alta (crescente)
+    def tendencia_crescente(self, df: pd.DataFrame, campo_vlr: str, campo_data: str) -> bool:
+        df[campo_data] = pd.to_datetime(df[campo_data])
+        df['data_ordinal'] = df[campo_data].map(pd.Timestamp.toordinal)
+
+        X = df['data_ordinal'].values.reshape(-1, 1)
+        y = df[campo_vlr].values
+
+        model = LinearRegression().fit(X, y)
+        coef = model.coef_[0]
+
+        return coef > 0
         
     def indicadores_fundamentalistas(self, row):
         score = 0
@@ -32,6 +45,13 @@ class fundamentalista:
 
         #empresa inoperavel 
         if volume_diario < 3000000.00: return 0, ""
+
+        df_lpa = self.db.load_table_to_dataframe_where(tabela_coleta_acao, 'cod_acao', row['cod_acao'])
+        
+        if self.tendencia_crescente(df_lpa,'lpa','dt_coleta'):
+            score += 1
+        else:
+            deductions.append("lpa")
 
         # Avaliação de PL
         if PL < 10 and PL > 0:
@@ -58,7 +78,7 @@ class fundamentalista:
         else:
             deductions.append("DY")
 
-        # Avaliação de PVP
+        # Avaliação de PVP      
         if PVP > 0 and PVP < 1:
             score += 1
         elif PVP > 2:
@@ -94,7 +114,7 @@ class fundamentalista:
         return score, deduction_string
     
 
-    def calcular_valor_intrinseco(self, vpa, lpa) :
+    def calcular_valor_intrinseco(self, vpa, lpa) -> float:
         # Se existirem valores negativos, não retorna o calculo
         if vpa < 0 or lpa < 0:
             return float(0)
@@ -136,14 +156,10 @@ class fundamentalista:
     def valor_teto_margem(self, row)-> float:
         valor_intrinseco = row['vlr_intrinseco']
         bazin12 = row['bazin12']
-        #bazin36 = row['bazin36']
-        #bazin60 = row['bazin60']
-        #determina o menor valor encontrado para a acao
         menor_valor = min(valor_intrinseco, bazin12) #, bazin36, bazin60)
         #margem de 10% para a compra, em cima do menor valor
         return float(menor_valor * 0.9)
-    
-   
+  
     def main(self) -> None:
         dfinfo_acoes = self.db.load_table_to_dataframe(view_ultima_coleta)
         dfDividendo = self.db.load_table_to_dataframe(tabela_dividendo)
@@ -151,12 +167,12 @@ class fundamentalista:
 
         for index, row in tqdm(dfinfo_acoes.iterrows(), total=len(dfinfo_acoes), desc="Processando linhas"):
             acao = row['cod_acao']
+            self.logger.info(f'Processando fundamentalista: {acao}')
+
             dfDividendo = self.db.load_table_to_dataframe_where(tabela_dividendo, 'cod_acao', acao)
 
             dfinfo_acoes.at[index, 'vlr_intrinseco'] = self.calcular_valor_intrinseco(row['vpa'], row['lpa'])
             dfinfo_acoes.at[index, 'bazin12'] = self.calculo_Bazin(dfDividendo)
-            # dfinfo_acoes.at[index, 'bazin36'] = self.calculo_Bazin(dfDividendo, 3)
-            # dfinfo_acoes.at[index, 'bazin60'] = self.calculo_Bazin(dfDividendo, 5)
             dfinfo_acoes.at[index, 'vlr_teto_margem'] = self.valor_teto_margem(dfinfo_acoes.iloc[index])
             score, mot_ded_score = self.indicadores_fundamentalistas(dfinfo_acoes.iloc[index])
             dfinfo_acoes.at[index, 'score'] = score
