@@ -29,12 +29,13 @@ class fundamentalista:
 
         return coef > 0
         
-    def indicadores_fundamentalistas(self, row):
+    def indicadores_fundamentalistas(self, row: pd.Series):
         score = 0
         PL = row['pl']
         volume_diario = row['vlm_diario']
         DY = row['dy']
         valor_atual = row['vlr_acao']
+        vlr_intrinseco = row['vlr_intrinseco']
         ROE = row['roe']
         PVP = row['pvp']
         pebit = row['pebit']
@@ -93,6 +94,12 @@ class fundamentalista:
         else:
             deductions.append("VPA")
 
+        # Avaliação de VPA
+        if vlr_intrinseco > valor_atual:
+            score += 1
+        else:
+            deductions.append("vlr_intrinseco")
+
         # Avaliação de dlebit
         if dlebit >= 0 and dlebit < 3: 
             score += 1
@@ -107,6 +114,7 @@ class fundamentalista:
             deductions.append("tag_along")
         else:
             deductions.append("tag_along")
+            
 
         # Converte a lista de deduções para uma string separada por vírgulas
         deduction_string = ", ".join(deductions)
@@ -126,7 +134,7 @@ class fundamentalista:
             print(e)
             return float(0)
 
-    def media_por_periodo(self, df, coluna_valor='vlr') -> float:
+    def media_por_periodo(self, df: pd.DataFrame, coluna_valor='vlr') -> float:
         # Garantir que a coluna 'dt_comunicado' está no formato datetime
         df['dt_comunicado'] = pd.to_datetime(df['dt_comunicado'], errors='coerce')
 
@@ -148,21 +156,24 @@ class fundamentalista:
         return float(media_valores)
 
 
-    def calculo_Bazin(self, df) -> float:
+    def calculo_Bazin(self, df: pd.DataFrame) -> float:
         media = self.media_por_periodo(df)
         result = (media * 100) / self._fator_bazin
         return float(result)
 
-    def valor_teto_margem(self, row)-> float:
+    def valor_teto_margem(self, row: pd.Series)-> float:
         valor_intrinseco = row['vlr_intrinseco']
         bazin12 = row['bazin12']
-        menor_valor = min(valor_intrinseco, bazin12) #, bazin36, bazin60)
-        #margem de 10% para a compra, em cima do menor valor
+        menor_valor = min(valor_intrinseco, bazin12) 
         return float(menor_valor * 0.9)
   
     def main(self) -> None:
-        dfinfo_acoes = self.db.load_table_to_dataframe(view_ultima_coleta)
-        dfDividendo = self.db.load_table_to_dataframe(tabela_dividendo)
+        dftemp = self.db.load_table_to_dataframe(view_ultima_coleta)
+        #filtra ações com volume muito baixo, para serem operadas
+        dfinfo_acoes = dftemp.loc[dftemp['vlm_diario'] > 1000000]
+        dfinfo_acoes.reset_index(drop=True, inplace=True)
+        del dftemp
+
         tqdm.pandas()
 
         for index, row in tqdm(dfinfo_acoes.iterrows(), total=len(dfinfo_acoes), desc="Processando linhas"):
