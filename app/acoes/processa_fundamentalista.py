@@ -34,8 +34,10 @@ class fundamentalista:
         PL = row['pl']
         volume_diario = row['vlm_diario']
         DY = row['dy']
+        bazin = row['bazin12']
         valor_atual = row['vlr_acao']
         vlr_intrinseco = row['vlr_intrinseco']
+        vlr_teto_margem = row['vlr_teto_margem']
         ROE = row['roe']
         PVP = row['pvp']
         pebit = row['pebit']
@@ -45,7 +47,7 @@ class fundamentalista:
         deductions = []  # Utiliza uma lista para acumular as deduções
 
         #empresa inoperavel 
-        if volume_diario < 3000000.00: return 0, ""
+        # if volume_diario < 3000000.00: return 0, ""
 
         df_lpa = self.db.load_table_to_dataframe_where(tabela_coleta_acao, 'cod_acao', row['cod_acao'])
         
@@ -79,6 +81,19 @@ class fundamentalista:
         else:
             deductions.append("DY")
 
+        # Avaliação de DY
+        if bazin > valor_atual:
+            score += 1
+        else:
+            deductions.append("bazin")
+
+        # Avaliação de DY
+        if vlr_teto_margem > valor_atual:
+            score += 1
+        else:
+            deductions.append("teto_margem")
+    
+
         # Avaliação de PVP      
         if PVP > 0 and PVP < 1:
             score += 1
@@ -102,6 +117,8 @@ class fundamentalista:
 
         # Avaliação de dlebit
         if dlebit >= 0 and dlebit < 3: 
+            score += 1
+        elif dlebit < 0 and pebit > 0: 
             score += 1
         else:
             deductions.append("dlebit")
@@ -168,11 +185,7 @@ class fundamentalista:
         return float(menor_valor * 0.9)
   
     def main(self) -> None:
-        dftemp = self.db.load_table_to_dataframe(view_ultima_coleta)
-        #filtra ações com volume muito baixo, para serem operadas
-        dfinfo_acoes = dftemp.loc[dftemp['vlm_diario'] > 1000000]
-        dfinfo_acoes.reset_index(drop=True, inplace=True)
-        del dftemp
+        dfinfo_acoes = self.db.load_table_to_dataframe(view_ultima_coleta)
 
         tqdm.pandas()
 
