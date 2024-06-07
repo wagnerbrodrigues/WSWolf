@@ -16,7 +16,7 @@ services:
     networks:
       - mynetwork
     volumes:
-      - ./mysql/dbdata:/var/lib/mysql
+      - dbdata:/var/lib/mysql
 
 volumes:
   dbdata:
