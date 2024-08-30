@@ -32,6 +32,7 @@ param=""
 fator_bazin=""
 meses_bazin=""
 init_mysql="no"  # Se a execução é para iniciar o mysql
+atua_db="no" 
 
 
 # Leitura dos parâmetros
@@ -41,17 +42,11 @@ while [[ "$#" -gt 0 ]]; do
         --bazin=*) fator_bazin="${1#*=}"; shift ;;
         --meses_bazin=*) meses_bazin="${1#*=}"; shift ;;
         --init-mysql) init_mysql="yes"; shift ;;
+        --atua-db) atua_db=1; shift ;;
         *) echo "Opção inválida: $1" >&2; exit 1 ;;
     esac
 done
 
-# Exportação
-export fator_bazin
-export meses_bazin
-export param
-
-# Apaga Logs de execução anteriores
-rm -rf $current_dir/logs/*
 
 
 # Validações de dependências
@@ -76,18 +71,30 @@ if ! docker info &> /dev/null; then
     exit 1
 fi
 
-# Iniciar MySQL
-if bash "$current_dir/init-mysql.sh"; then
-   echo "MySQL iniciado com sucesso."
-else
-   echo "Erro ao iniciar o MySQL. Código de retorno: $?"
-   exit 1
+if [[ $atua_db == 1 ]]; then
+    param="backup"
+else 
+    # # # Iniciar MySQL
+    if bash "$current_dir/init-mysql.sh"; then
+        echo "MySQL iniciado com sucesso."
+    else
+        echo "Erro ao iniciar o MySQL. Código de retorno: $?"
+        exit 1
+    fi
 fi
 
-# Se a opção de iniciar MySQL foi passada, finaliza apos inicialização. Essa opção serve somente para iniciar o database.
+# # # Se a opção de iniciar MySQL foi passada, finaliza apos inicialização. Essa opção serve somente para iniciar o database.
 if [[ $init_mysql == "yes" ]]; then
     exit 0
 fi
+
+# Exportação
+export fator_bazin
+export meses_bazin
+export param
+
+# Apaga Logs de execução anteriores
+rm -rf $current_dir/logs/*
 
 # Remover o contêiner anterior
 if docker-compose -f "$wswolf_compose_file" down; then

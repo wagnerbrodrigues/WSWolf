@@ -13,13 +13,16 @@ services:
     networks:
       - mysql_net
     volumes:
-      - logs:/app/logs  # Volume bind para a pasta /app/logs
-      - backup:/app/db/backup # Volume para o backup do MySQL
+      - ./logs:/app/logs  # Volume bind para a pasta /app/logs
+      - ./mysql/backup:/app/db/backup  # Volume para o backup do MySQL
       - ./.env:/app/db/.env
     environment:
       fator_bazin: ${fator_bazin}
       param: ${param}
 
+volumes:
+  logs:
+  backup:
 
 networks:
   mysql_net:

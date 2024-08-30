@@ -70,7 +70,7 @@ class fundamentalista:
             deductions.append("pebit")
 
         # Avaliação de ROE
-        if ROE > 0:
+        if ROE > 12:
             score += 1
         else:
             deductions.append("ROE")
