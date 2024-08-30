@@ -72,6 +72,13 @@ wait_for_mysql() {
     echo "MySQL ($container_name) está pronto para conexão."
 }
 
+# Remover o contêiner anterior
+if docker-compose -f "$mysql_compose_file" down; then
+   echo "Contêiner mysql anterior removido com sucesso."
+else
+   echo "Erro ao remover o contêiner anterior."
+fi
+
 # Subir o contêiner MySQL com o Docker Compose
 if docker-compose -f "$mysql_compose_file" up --build -d; then
     echo "Contêiner MySQL iniciado com sucesso."
